@@ -24,6 +24,11 @@ find "$DEST" -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
 # 2. Export the source repo's tracked files at HEAD into it.
 git -C "$SRC" archive --format=tar HEAD | tar -x -C "$DEST"
 
+# 3. The mirror keeps its own README (it explains that it is a mirror).
+if git -C "$DEST" cat-file -e HEAD:README.md 2>/dev/null; then
+  git -C "$DEST" show HEAD:README.md > "$DEST/README.md"
+fi
+
 git -C "$DEST" add -A
 if git -C "$DEST" diff --cached --quiet; then
   echo "deploy repo already up to date"

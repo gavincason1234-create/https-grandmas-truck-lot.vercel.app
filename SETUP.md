@@ -28,8 +28,10 @@ Anyone can now sign in with Google. Only the emails inside the safe get the owne
 
 ## 2. Vercel
 
-1. Vercel → Add New Project → import **`gavincason1234-create/https-grandmas-truck-lot.vercel.app`**
-   (that repo is a mirror of this one, kept in sync with `pnpm sync:deploy`). Framework: Next.js (auto). Leave build settings default.
+1. Vercel is **already connected to this repository** (project `grandmas-truck-lot`): every push builds a
+   preview, and merging to `main` deploys production. Nothing to import. The public mirror repo
+   `https-grandmas-truck-lot.vercel.app` (refreshed with `pnpm sync:deploy`) is optional — only useful if you
+   ever want Vercel to build from a public repo instead.
 2. **Environment Variables** (Production + Preview):
 
    | Name | Value | Where from |
@@ -43,8 +45,10 @@ Anyone can now sign in with Google. Only the emails inside the safe get the owne
    Optional later: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (see §4),
    `CRON_SECRET` (any long random string; protects the cleanup cron).
 3. Deploy. Open the site → **Sign in** → pick your Gmail → you land on `/admin`.
-4. If the old v0 project currently owns `grandmas-truck-lot.vercel.app`, move the domain: Vercel → old project →
-   Settings → Domains → remove; new project → Settings → Domains → add `grandmas-truck-lot.vercel.app`.
+4. If the old v0 project still owns `grandmas-truck-lot.vercel.app`, move the domain: Vercel → old project →
+   Settings → Domains → remove; project `grandmas-truck-lot` → Settings → Domains → add `grandmas-truck-lot.vercel.app`.
+5. Preview deployments sit behind Vercel's login wall by default (Deployment Protection). Leave that on; it keeps
+   half-configured previews private.
 
 ## 3. First things in the dashboard
 
@@ -72,7 +76,8 @@ git commit -am "Add Grandma as admin" && git push
 pnpm sync:deploy && git -C ../https-grandmas-truck-lot.vercel.app push
 ```
 
-Vercel redeploys; she signs in with that Gmail and gets the dashboard. `pnpm vault remove-admin …` takes it away.
+Merge to `main` and Vercel redeploys; she signs in with that Gmail and gets the dashboard. `pnpm vault remove-admin …` takes it away.
+(The `sync:deploy` line is only needed if Vercel is ever switched to the mirror repo.)
 
 ## 6. Running it on your own computer
 
