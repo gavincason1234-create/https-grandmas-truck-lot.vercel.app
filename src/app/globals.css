@@ -1,0 +1,229 @@
+@import "tailwindcss";
+
+/* Night mode: follows the phone unless the driver picks one. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ---------- brand palette (from the original design) ---------- */
+:root {
+  --dust: #edeae3;
+  --dust-deep: #dcd8ce;
+  --asphalt: #23262b;
+  --asphalt-soft: #3a3f45;
+  --amber: #c8951f;
+  --amber-lift: #e4b33c;
+  --green: #1f5f4a;
+  --brick: #96371f;
+
+  /* semantic tokens — day */
+  --bg: var(--dust);
+  --bg-elev: #ffffff;
+  --bg-sunk: var(--dust-deep);
+  --fg: var(--asphalt);
+  --fg-muted: #6b675e;
+  --fg-faint: #9a958a;
+  --line: #c4bfb3;
+  --line-strong: var(--asphalt);
+  --accent: var(--amber);
+  --accent-hover: var(--amber-lift);
+  --on-accent: var(--asphalt);
+  --ok: var(--green);
+  --ok-bg: #dceae2;
+  --warn: var(--brick);
+  --warn-bg: #f2ded8;
+  --header-bg: var(--asphalt);
+  --header-fg: var(--dust);
+  --header-muted: #a9afb6;
+  --focus: var(--amber-lift);
+}
+
+:root[data-theme="dark"] {
+  --bg: #15171a;
+  --bg-elev: #1f2226;
+  --bg-sunk: #0f1113;
+  --fg: #e8e4da;
+  --fg-muted: #a9a49a;
+  --fg-faint: #6f6b64;
+  --line: #3a3f45;
+  --line-strong: #e8e4da;
+  --accent: var(--amber-lift);
+  --accent-hover: #f1c65a;
+  --on-accent: #15171a;
+  --ok: #4fa683;
+  --ok-bg: #1a3a2e;
+  --warn: #e0785a;
+  --warn-bg: #43221a;
+  --header-bg: #0f1113;
+  --header-fg: #e8e4da;
+  --header-muted: #8b919a;
+  --focus: var(--amber-lift);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-dust: var(--dust);
+  --color-dust-deep: var(--dust-deep);
+  --color-asphalt: var(--asphalt);
+  --color-asphalt-soft: var(--asphalt-soft);
+  --color-amber: var(--amber);
+  --color-amber-lift: var(--amber-lift);
+  --color-green: var(--green);
+  --color-brick: var(--brick);
+
+  --color-bg: var(--bg);
+  --color-elev: var(--bg-elev);
+  --color-sunk: var(--bg-sunk);
+  --color-fg: var(--fg);
+  --color-muted: var(--fg-muted);
+  --color-faint: var(--fg-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-warn: var(--warn);
+  --color-warn-bg: var(--warn-bg);
+  --color-header: var(--header-bg);
+  --color-header-fg: var(--header-fg);
+  --color-header-muted: var(--header-muted);
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+}
+
+/* ---------- base (layered so Tailwind utilities always win) ---------- */
+@layer base {
+  html {
+    background: var(--bg);
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    line-height: 1.45;
+    min-height: 100dvh;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  :focus-visible {
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+  }
+  input,
+  select,
+  textarea,
+  button {
+    font: inherit;
+    color: inherit;
+  }
+  /* Big enough to hit with a thumb in a moving cab. */
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 11px 12px;
+    font-size: 16px;
+    background: var(--bg-elev);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+  }
+  input:focus,
+  select:focus,
+  textarea:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: -1px;
+    border-color: var(--accent);
+  }
+  input[type="checkbox"],
+  input[type="radio"] {
+    width: 22px;
+    height: 22px;
+    accent-color: var(--accent);
+  }
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* ---------- stall row (the lot at a glance) ---------- */
+  .stall {
+    /* Every stall fits on one row on a phone; they just get thinner. */
+    flex: 1 1 0;
+    min-width: 8px;
+    max-width: 26px;
+    height: 100%;
+    transform: skewX(-18deg);
+    border: 2px solid var(--line-strong);
+    border-radius: 1px;
+  }
+  .stall.open {
+    border-style: dashed;
+    border-color: var(--fg-faint);
+  }
+  .stall.taken {
+    background: var(--line-strong);
+  }
+  .stall.member {
+    background: var(--ok);
+    border-color: var(--ok);
+  }
+  .stall-legend i {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    transform: skewX(-18deg);
+    margin-right: 5px;
+    vertical-align: -1px;
+  }
+
+  /* ---------- photos until real ones are taken ---------- */
+  .photo-placeholder {
+    background: repeating-linear-gradient(135deg, #4a4f55 0 10px, #3a3f45 10px 20px);
+    color: #fff;
+  }
+
+  /* ---------- misc ---------- */
+  .spin {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: sp 0.7s linear infinite;
+    vertical-align: -3px;
+  }
+  @keyframes sp {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .spin {
+      animation: none;
+    }
+    * {
+      transition-duration: 0.01ms !important;
+    }
+  }
+  @media print {
+    .no-print {
+      display: none !important;
+    }
+    /* Dark receipt blocks print as plain black-on-white so the codes are readable on paper. */
+    .print-plain,
+    .print-plain * {
+      background: #fff !important;
+      color: #000 !important;
+      border-color: #000 !important;
+    }
+  }
+}
