@@ -1,6 +1,7 @@
 # grandmas-truck-lot.vercel.app — deploy mirror
 
-This repository is what **Vercel** builds and deploys to https://grandmas-truck-lot.vercel.app.
+This repository is an optional public mirror of the site. Vercel currently builds straight from the
+private source repository; switch it to this one only if you ever want builds from a public repo.
 
 It is a mirror of the private source repository
 **`gavincason1234-create/Grandmas-trucklot-website-`**, refreshed with `pnpm sync:deploy` from there.
@@ -10,7 +11,7 @@ Don't edit files here by hand — change the source repo, then sync, then push.
 # in Grandmas-trucklot-website-
 git commit -am "…"
 pnpm sync:deploy                                   # copies committed files here
-git -C ../https-grandmas-truck-lot.vercel.app push # Vercel redeploys
+git -C ../https-grandmas-truck-lot.vercel.app push
 ```
 
 Setup steps (Google sign-in, Vercel environment variables, Stripe) are in `SETUP.md`.
