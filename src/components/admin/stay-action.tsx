@@ -8,15 +8,18 @@ type Props = {
   id: string;
   /** When set, the owner is asked this question before the form goes through. */
   confirm?: string;
+  /** The dashboard page (and search) to come back to afterwards. Defaults to the action's own tab. */
+  back?: string;
   variant?: ButtonVariant;
   children: ReactNode;
 };
 
 /** One button = one form = one server action. Used inside StayCard's `actions` slot. */
-export function StayAction({ action, id, confirm, variant = "ghost", children }: Props) {
+export function StayAction({ action, id, confirm, back, variant = "ghost", children }: Props) {
   return (
     <form action={action}>
       <input type="hidden" name="id" value={id} />
+      {back ? <input type="hidden" name="back" value={back} /> : null}
       {confirm ? (
         <ConfirmButton message={confirm} variant={variant} className="w-full">
           {children}

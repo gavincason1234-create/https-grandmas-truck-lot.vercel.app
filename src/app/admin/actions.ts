@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { audit } from "@/lib/audit";
+import { safeAdminBack } from "@/lib/auth/next";
 import { AuthError, requireAdminApi } from "@/lib/auth/session";
 import { formatPhone } from "@/lib/codes";
 import { addMonths, isIsoDay, nextBillAfter, todayStr } from "@/lib/dates";
@@ -21,6 +22,7 @@ import type { LotSettings, OverheadLine, Photo, PrivateSettings, SessionUser } f
  */
 
 const TONIGHT = "/admin";
+const BOOKINGS = "/admin/bookings";
 const MONTHLY = "/admin/monthly";
 const REVIEWS = "/admin/reviews";
 const SETTINGS = "/admin/settings";
@@ -39,7 +41,17 @@ type Outcome = { to?: string } | { error: string };
 
 function withQuery(path: string, params: Record<string, string>): string {
   const q = new URLSearchParams(params).toString();
-  return q ? `${path}?${q}` : path;
+  if (!q) return path;
+  return `${path}${path.includes("?") ? "&" : "?"}${q}`;
+}
+
+/**
+ * Where to land after a booking button: the page it was tapped on (its hidden "back" field) when
+ * that is one of our dashboard pages, else the tab the action belongs to. The check lives in
+ * auth/next.ts next to safeNext(), where it is unit tested.
+ */
+function returnTo(fd: FormData, fallback: string): string {
+  return safeAdminBack(text(fd, "back"), fallback);
 }
 
 /** Do the work, then go back to the page — with a plain-words message when something went wrong. */
@@ -97,7 +109,7 @@ const GONE_REVIEW = "That review is gone — it may already be deleted.";
 export async function markArrived(formData: FormData): Promise<void> {
   const user = await owner();
   const id = idOf(formData);
-  return finish(TONIGHT, async () => {
+  return finish(returnTo(formData, TONIGHT), async () => {
     if (!id) return { error: "Nothing was selected." };
     const store = getStore();
     const b = await store.getBooking(id);
@@ -110,7 +122,7 @@ export async function markArrived(formData: FormData): Promise<void> {
 export async function markNoShow(formData: FormData): Promise<void> {
   const user = await owner();
   const id = idOf(formData);
-  return finish(TONIGHT, async () => {
+  return finish(returnTo(formData, TONIGHT), async () => {
     if (!id) return { error: "Nothing was selected." };
     const store = getStore();
     const b = await store.getBooking(id);
@@ -124,7 +136,7 @@ export async function markNoShow(formData: FormData): Promise<void> {
 export async function markPaid(formData: FormData): Promise<void> {
   const user = await owner();
   const id = idOf(formData);
-  return finish(TONIGHT, async () => {
+  return finish(returnTo(formData, TONIGHT), async () => {
     if (!id) return { error: "Nothing was selected." };
     const store = getStore();
     const b = await store.getBooking(id);
@@ -137,7 +149,7 @@ export async function markPaid(formData: FormData): Promise<void> {
 export async function markDeparted(formData: FormData): Promise<void> {
   const user = await owner();
   const id = idOf(formData);
-  return finish(TONIGHT, async () => {
+  return finish(returnTo(formData, TONIGHT), async () => {
     if (!id) return { error: "Nothing was selected." };
     const store = getStore();
     const b = await store.getBooking(id);
@@ -150,7 +162,8 @@ export async function markDeparted(formData: FormData): Promise<void> {
 export async function cancelRefund(formData: FormData): Promise<void> {
   const user = await owner();
   const id = idOf(formData);
-  return finish(TONIGHT, async () => {
+  const back = returnTo(formData, TONIGHT);
+  return finish(back, async () => {
     if (!id) return { error: "Nothing was selected." };
     const store = getStore();
     const b = await store.getBooking(id);
@@ -159,14 +172,14 @@ export async function cancelRefund(formData: FormData): Promise<void> {
     // If the card refund failed, keep the money counted and tell the owner to finish it in Stripe.
     await store.updateBooking(id, { status: "cancelled", paid: refund === "failed" ? b.paid : false });
     await audit(user, "admin.cancel_refund", b.code, { name: b.name, arrive: b.arrive, refundCents: b.paid ? b.amountCents : 0, paymentRef: b.paymentRef, refund });
-    if (refund === "failed") return { to: withQuery(TONIGHT, { error: `${b.name}'s reservation is cancelled, but the card refund did not go through. Refund it from the Stripe dashboard.` }) };
+    if (refund === "failed") return { to: withQuery(back, { error: `${b.name}'s reservation is cancelled, but the card refund did not go through. Refund it from the Stripe dashboard.` }) };
   });
 }
 
 export async function removeBooking(formData: FormData): Promise<void> {
   const user = await owner();
   const id = idOf(formData);
-  return finish(TONIGHT, async () => {
+  return finish(returnTo(formData, TONIGHT), async () => {
     if (!id) return { error: "Nothing was selected." };
     const store = getStore();
     const b = await store.getBooking(id);
@@ -177,10 +190,24 @@ export async function removeBooking(formData: FormData): Promise<void> {
   });
 }
 
+/** Undo "Hide": the stay shows under Recently left on Tonight again. */
+export async function restoreBooking(formData: FormData): Promise<void> {
+  const user = await owner();
+  const id = idOf(formData);
+  return finish(returnTo(formData, BOOKINGS), async () => {
+    if (!id) return { error: "Nothing was selected." };
+    const store = getStore();
+    const b = await store.getBooking(id);
+    if (!b) return { error: GONE_BOOKING };
+    await store.updateBooking(id, { hidden: false });
+    await audit(user, "admin.unhide_booking", b.code, { name: b.name, status: b.status, arrive: b.arrive });
+  });
+}
+
 export async function cancelHold(formData: FormData): Promise<void> {
   const user = await owner();
   const id = idOf(formData);
-  return finish(TONIGHT, async () => {
+  return finish(returnTo(formData, TONIGHT), async () => {
     if (!id) return { error: "Nothing was selected." };
     const store = getStore();
     const b = await store.getBooking(id);

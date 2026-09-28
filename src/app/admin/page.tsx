@@ -7,7 +7,7 @@ import { OpenStrip } from "@/components/admin/open-strip";
 import { StayAction } from "@/components/admin/stay-action";
 import { Stalls } from "@/components/stalls";
 import { StayCard } from "@/components/stay-card";
-import { Button } from "@/components/ui/button";
+import { Button, LinkButton } from "@/components/ui/button";
 import { Empty, GroupName, Note, Panel } from "@/components/ui/card";
 import { Check, Field, Row2 } from "@/components/ui/field";
 import { Tag } from "@/components/ui/tag";
@@ -16,6 +16,7 @@ import { occupancyOn, occupancyRange } from "@/lib/availability";
 import { prettyDay, todayStr } from "@/lib/dates";
 import { money } from "@/lib/money";
 import { codesForBooking, visibleCodes } from "@/lib/services/access";
+import { recentlyLeft } from "@/lib/services/book";
 import { getStore } from "@/lib/store";
 import type { Booking } from "@/lib/types";
 import { addWalkUp, cancelHold, cancelRefund, markArrived, markDeparted, markNoShow, markPaid, removeBooking } from "./actions";
@@ -47,7 +48,7 @@ export default async function AdminTonightPage({ searchParams }: { searchParams:
   const parked = bookings.filter((b) => b.status === "parked").sort(byArrive);
   const coming = bookings.filter((b) => b.status === "reserved" && b.arrive > today).sort(byArrive);
   const waiting = bookings.filter((b) => b.status === "pending_payment").sort(newestFirst);
-  const left = bookings.filter((b) => b.status === "departed" && !b.hidden).sort(newestFirst).slice(0, 5);
+  const left = recentlyLeft(bookings);
 
   const added = sp.added ? bookings.find((b) => b.code === sp.added) ?? null : null;
   const addedCodes = added ? visibleCodes(codesForBooking(added, priv, today)) : null;
@@ -218,7 +219,7 @@ export default async function AdminTonightPage({ searchParams }: { searchParams:
                   stay={b}
                   showContact
                   actions={
-                    <StayAction action={removeBooking} id={b.id} variant="ghost" confirm={`Hide ${b.name}'s stay from this list? The money stays counted on the Money tab.`}>
+                    <StayAction action={removeBooking} id={b.id} variant="ghost" confirm={`Hide ${b.name}'s stay from this list? It stays under Bookings, where you can put it back, and the money stays counted on the Money tab.`}>
                       Hide
                     </StayAction>
                   }
@@ -226,6 +227,9 @@ export default async function AdminTonightPage({ searchParams }: { searchParams:
               ))}
             </>
           ) : null}
+          <LinkButton href="/admin/bookings" variant="ghost" className="w-full mt-4">
+            Find an older stay, or search by name, phone or plate
+          </LinkButton>
         </section>
       )}
 

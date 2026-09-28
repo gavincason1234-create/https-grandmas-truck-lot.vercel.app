@@ -13,10 +13,11 @@ src/lib/                 everything that is not UI
   dates.ts pricing.ts availability.ts money.ts codes.ts   pure helpers, unit tested
   store/                 LotStore interface; MemoryStore (dev/tests) and SupabaseStore (prod)
   auth/session.ts        getSessionUser(), requireUser(), requireAdmin(), requireAdminApi()
-  auth/next.ts           safeNext() — sanitise ?next= redirects
+  auth/next.ts           safeNext() — sanitise ?next= redirects; safeAdminBack() — the dashboard page a booking button may return to
   vault/                 the safe: isAdminEmail(), getVault(), vaultStatus()   (server-only)
   services/reservations.ts  createReservation(), markPaidByCode(), refundable()
   services/access.ts     codesForBooking()/codesForMember() — the ONLY rule for showing gate codes
+  services/book.ts       the owner's booking book: piles, search, "who was here on" (pure, unit tested)
   services/sample.ts     loadSampleData()
   payments.ts            Stripe wrapper; paymentsMode() → "stripe" | "simulated"
   api.ts                 handler(), json(), ApiError, errorResponse()
