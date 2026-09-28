@@ -1,5 +1,6 @@
 import { ApiError, clientIp, handler, json } from "@/lib/api";
 import { getSessionUser } from "@/lib/auth/session";
+import { env } from "@/lib/env";
 import { rateLimit } from "@/lib/ratelimit";
 import { createReservation } from "@/lib/services/reservations";
 
@@ -10,6 +11,7 @@ import { createReservation } from "@/lib/services/reservations";
  * and /api/lookup apply the reveal rules.
  */
 export const POST = handler(async (req: Request) => {
+  if (env.notConfigured) throw new ApiError("Online reservations aren't switched on yet. Call the lot and she'll hold your spot.", 503, "not_configured");
   const rl = rateLimit(clientIp(req) + ":bookings", { limit: 10, windowMs: 600_000 });
   if (!rl.ok) {
     return json(

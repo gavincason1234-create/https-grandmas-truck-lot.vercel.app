@@ -20,8 +20,15 @@ const canUseSupabase = Boolean(supabaseUrl && supabaseAnonKey);
  */
 const storeMode: StoreMode = requestedMemory && !isVercelProduction ? "memory" : canUseSupabase ? "supabase" : "memory";
 
+/**
+ * A live Vercel production deployment with no database. The site still renders so the owner can
+ * look at it, but it must not accept reservations it could never keep.
+ */
+const notConfigured = isVercelProduction && storeMode === "memory";
+
 export const env = {
   storeMode,
+  notConfigured,
   isVercelProduction,
   nodeEnv: process.env.NODE_ENV ?? "development",
   supabase: {

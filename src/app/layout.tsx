@@ -35,6 +35,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-accent focus:text-on-accent focus:px-3 focus:py-2 focus:rounded-sm">
           Skip to content
         </a>
+        {env.notConfigured ? (
+          <div role="alert" className="bg-warn text-white text-[13px] font-bold text-center px-3 py-2">
+            This site isn&apos;t connected to its database yet, so reservations can&apos;t be saved. Owner: add the Vercel environment variables from SETUP.md, then redeploy.
+          </div>
+        ) : null}
         {children}
       </body>
     </html>

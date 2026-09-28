@@ -57,6 +57,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
               </form>
               <Note className="mt-4">This site is running without a database (LOT_STORE=memory), so Google sign-in is replaced by these buttons. Nothing here is real.</Note>
             </div>
+          ) : !env.supabase.url ? (
+            <Note>Sign-in isn&apos;t switched on yet: the website has no database connection. Owner: add the Vercel environment variables from SETUP.md, then redeploy. Drivers don&apos;t need to sign in to reserve.</Note>
           ) : (
             <div>
               <LinkButton href={`/auth/login?next=${encodeURIComponent(next)}`} variant="dark" size="lg">
