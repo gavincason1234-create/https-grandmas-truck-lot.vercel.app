@@ -1,19 +1,18 @@
-# grandmas-truck-lot.vercel.app — deploy mirror
+# grandmas-truck-lot.vercel.app — what Vercel deploys
 
-This repository is an optional public mirror of the site. Vercel currently builds straight from the
-private source repository; switch it to this one only if you ever want builds from a public repo.
+This repository is what the Vercel project **`trucklot`** builds and serves at
+https://grandmas-truck-lot.vercel.app. Its `main` branch is the live site.
 
 It is a mirror of the private source repository
 **`gavincason1234-create/Grandmas-trucklot-website-`**, refreshed with `pnpm sync:deploy` from there.
-Don't edit files here by hand — change the source repo, then sync, then push.
+Don't edit files here by hand — change the source repo, merge, sync, push.
 
 ```bash
-# in Grandmas-trucklot-website-
-git commit -am "…"
+# in Grandmas-trucklot-website-, after merging a change
 pnpm sync:deploy                                   # copies committed files here
-git -C ../https-grandmas-truck-lot.vercel.app push
+git -C ../https-grandmas-truck-lot.vercel.app push # trucklot redeploys
 ```
 
-Setup steps (Google sign-in, Vercel environment variables, Stripe) are in `SETUP.md`.
-The encrypted safe (`vault/blob.json`) is copied too — it is useless without `VAULT_KEY`, which
-lives only in Vercel's environment variables.
+Only git-tracked files are copied, so `.env` files and the vault key can never end up here. The
+encrypted safe (`vault/blob.json`) is included and is useless without `VAULT_KEY`, which lives only
+in the `trucklot` project's environment variables. Setup steps are in `SETUP.md`.
