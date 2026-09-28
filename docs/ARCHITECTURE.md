@@ -67,7 +67,9 @@ Components: `Button`/`LinkButton` (variants primary, dark, ghost, danger, link; 
 content. When the owner pastes a link into Settings → Photos → "Background photo" (`settings.backgroundUrl`, checked by
 `safeBackgroundUrl()` in `src/lib/background.ts`: https or a `/public` path only), that layer shows the photo under a
 `color-mix` tint of `--bg` (78% by day, 86% at night) so text on the page stays readable. With no link it renders nothing and
-the built-in CSS background in `globals.css` shows. `body` must stay `background: transparent` for this to work.
+the built-in CSS background in `globals.css` shows: a fine warm gravel grain (an inline SVG noise tile blended with
+`overlay`) plus a soft sodium-lamp glow under the header by day, and at night a single yard-light pinpoint with its dim
+pool. It is CSS only, on `html`, nothing animated. `body` must stay `background: transparent` for the photo layer to work.
 
 ## Modes
 

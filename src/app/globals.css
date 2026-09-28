@@ -34,6 +34,11 @@
   --header-fg: var(--dust);
   --header-muted: #a9afb6;
   --focus: var(--amber-lift);
+
+  /* Gravel grain: a 200px tile of warm-tinted noise, blended with `overlay` so it adds light AND
+     dark specks and leaves the average luminance where --bg is. The night copy is fainter. */
+  --grain-day: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='2.2 0 0 0 -.6 2.1 0 0 0 -.58 1.9 0 0 0 -.55 0 0 0 0 .4'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+  --grain-night: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.4' numOctaves='2' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='2.2 0 0 0 -.6 2.1 0 0 0 -.58 1.9 0 0 0 -.55 0 0 0 0 .2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
 }
 
 :root[data-theme="dark"] {
@@ -96,10 +101,35 @@
 
 /* ---------- base (layered so Tailwind utilities always win) ---------- */
 @layer base {
+  /*
+   * The built-in background: the lot itself. A fine warm gravel grain over the whole page and a
+   * soft sodium-lamp glow that spills from under the header and is gone by the first panel.
+   * It lives on <html> so the owner's fixed photo layer (.site-bg) can paint over it.
+   */
   html {
-    /* The page background lives on <html> so a fixed photo layer can sit between it and the content. */
-    background: var(--bg);
     -webkit-text-size-adjust: 100%;
+    background-color: var(--bg);
+    background-image:
+      /* the lamp lip: a touch of amber right under the header */
+      linear-gradient(to bottom, color-mix(in srgb, var(--amber-lift) 10%, transparent), transparent 150px),
+      /* the dusk haze: amber lifted toward panel white, so text luminance barely moves */
+      radial-gradient(120% 430px at 50% 0, color-mix(in srgb, color-mix(in srgb, var(--amber-lift) 40%, var(--bg-elev)) 32%, transparent), transparent),
+      var(--grain-day);
+    background-repeat: no-repeat, no-repeat, repeat;
+    background-size: auto, auto, 200px 200px;
+    background-blend-mode: normal, normal, overlay;
+  }
+  /* Night: near-black asphalt, the grain barely catching light, and one yard light — a pinpoint
+     with a small halo, low on the right where no text sits, and its dim pool below it. */
+  :root[data-theme="dark"] {
+    background-image:
+      radial-gradient(circle at 94% 126px, var(--amber-lift) 0 1.2px, transparent 2.6px),
+      radial-gradient(circle at 94% 126px, color-mix(in srgb, var(--amber-lift) 26%, transparent), transparent 12px),
+      radial-gradient(80% 340px at 94% 0, color-mix(in srgb, var(--amber) 8%, transparent), transparent),
+      var(--grain-night);
+    background-repeat: no-repeat, no-repeat, no-repeat, repeat;
+    background-size: auto, auto, auto, 200px 200px;
+    background-blend-mode: normal, normal, normal, overlay;
   }
   body {
     margin: 0;
@@ -236,6 +266,9 @@
     }
   }
   @media print {
+    html {
+      background: #fff;
+    }
     .no-print {
       display: none !important;
     }
