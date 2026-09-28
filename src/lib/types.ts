@@ -37,6 +37,8 @@ export type LotSettings = {
   security: SecurityFlags;
   overhead: OverheadLine[];
   photos: Photo[];
+  /** A photo shown behind the whole site, tinted for readability. Blank = the built-in look. */
+  backgroundUrl: string;
   /** Max trailer length the lot comfortably fits, in feet. */
   maxLengthFt: number;
   /** Shown on the home page while payments are simulated. */

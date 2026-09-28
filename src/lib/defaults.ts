@@ -32,6 +32,7 @@ export const DEFAULT_SETTINGS: LotSettings = {
     { src: "", caption: "Shower + laundry shed" },
     { src: "", caption: "Gate keypad, cab height" },
   ],
+  backgroundUrl: "",
   maxLengthFt: 75,
   testMode: true,
 };

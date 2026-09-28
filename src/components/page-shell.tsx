@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { CallBar } from "./call-bar";
+import { SiteBackground } from "./site-background";
 import { SiteFooter } from "./site-footer";
 import { SiteHeader } from "./site-header";
 import { TestBanner } from "./test-banner";
@@ -13,6 +14,7 @@ export async function PageShell({ children, callBar = true, reserveHref, reserve
   const settings = await getStore().getSettings();
   return (
     <>
+      <SiteBackground url={settings.backgroundUrl} />
       <TestBanner settings={settings} />
       <SiteHeader />
       <main id="main" className={`mx-auto ${width} px-4 sm:px-6 ${callBar ? "pb-24" : "pb-8"}`}>

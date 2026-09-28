@@ -120,7 +120,7 @@ export function SettingsForm({ settings, action }: Props) {
                 <label htmlFor={`s-photoSrc-${p.key}`} className="block text-[13.5px] font-semibold mb-1.5">
                   Photo {i + 1} link
                 </label>
-                <input id={`s-photoSrc-${p.key}`} name="photoSrc" type="url" inputMode="url" autoComplete="off" placeholder="https://…" maxLength={600} value={p.src} onChange={(e) => updatePhoto(p.key, { src: e.target.value })} />
+                <input id={`s-photoSrc-${p.key}`} name="photoSrc" type="text" inputMode="url" autoComplete="off" placeholder="https://…" maxLength={600} value={p.src} onChange={(e) => updatePhoto(p.key, { src: e.target.value })} />
               </div>
               <div>
                 <label htmlFor={`s-photoCaption-${p.key}`} className="block text-[13.5px] font-semibold mb-1.5">
@@ -139,6 +139,21 @@ export function SettingsForm({ settings, action }: Props) {
             <Plus size={16} aria-hidden /> Add a photo
           </Button>
         ) : null}
+        <div className="mt-6 pt-5 border-t border-line">
+          <Field
+            id="s-backgroundUrl"
+            label="Background photo"
+            name="backgroundUrl"
+            type="text"
+            inputMode="url"
+            autoComplete="off"
+            placeholder="https://…"
+            maxLength={600}
+            defaultValue={settings.backgroundUrl}
+            optional
+            hint="Shows faintly behind every page, day and night. A wide shot of the lot works best. Leave blank for the built-in gravel-and-dusk look."
+          />
+        </div>
       </Panel>
 
       <Panel>

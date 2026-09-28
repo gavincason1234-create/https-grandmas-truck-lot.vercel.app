@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AdminNav } from "@/components/admin/admin-nav";
+import { SiteBackground } from "@/components/site-background";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { TestBanner } from "@/components/test-banner";
@@ -20,6 +21,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <>
+      <SiteBackground url={settings.backgroundUrl} />
       <TestBanner settings={settings} />
       <SiteHeader />
       <AdminNav who={user.email} />

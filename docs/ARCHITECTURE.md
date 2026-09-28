@@ -61,6 +61,14 @@ Components: `Button`/`LinkButton` (variants primary, dark, ghost, danger, link; 
 `Card`/`Panel`/`Note`/`Empty`/`SectionTitle`/`GroupName`, `Tag`, `Field`/`TextArea`/`Select`/`Check`/`Row2`,
 `Stalls` (the angled stall row), `StayCard`, `CodesPanel`, `CallBar`, `ThemeToggle`. Icons from `lucide-react`.
 
+## Background
+
+`<html>` carries the page colour (`--bg`) so `<SiteBackground>` — a fixed, `z-index: -1` layer — can sit between it and the
+content. When the owner pastes a link into Settings → Photos → "Background photo" (`settings.backgroundUrl`, checked by
+`safeBackgroundUrl()` in `src/lib/background.ts`: https or a `/public` path only), that layer shows the photo under a
+`color-mix` tint of `--bg` (78% by day, 86% at night) so text on the page stays readable. With no link it renders nothing and
+the built-in CSS background in `globals.css` shows. `body` must stay `background: transparent` for this to work.
+
 ## Modes
 
 - `LOT_STORE=memory` → in-memory store, pretend sign-in buttons on /login (driver@example.com / admin@example.com).

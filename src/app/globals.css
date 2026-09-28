@@ -97,12 +97,13 @@
 /* ---------- base (layered so Tailwind utilities always win) ---------- */
 @layer base {
   html {
+    /* The page background lives on <html> so a fixed photo layer can sit between it and the content. */
     background: var(--bg);
     -webkit-text-size-adjust: 100%;
   }
   body {
     margin: 0;
-    background: var(--bg);
+    background: transparent;
     color: var(--fg);
     font-family: var(--font-sans);
     line-height: 1.45;
@@ -182,6 +183,26 @@
     transform: skewX(-18deg);
     margin-right: 5px;
     vertical-align: -1px;
+  }
+
+  /* ---------- the owner's background photo (SiteBackground) ---------- */
+  .site-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  /* Tint it toward the page colour so text on top stays readable, day and night. */
+  .site-bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--bg) 78%, transparent);
+  }
+  :root[data-theme="dark"] .site-bg::after {
+    background: color-mix(in srgb, var(--bg) 86%, transparent);
   }
 
   /* ---------- photos until real ones are taken ---------- */
